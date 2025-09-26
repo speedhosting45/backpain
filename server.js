@@ -8,6 +8,7 @@ const connectDB = require('./config/database');
 // Route imports
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
+const serverRoutes = require('./routes/servers'); // Add this line
 
 // Initialize Express app
 const app = express();
@@ -18,10 +19,12 @@ connectDB();
 // Security Middleware
 app.use(helmet());
 
-// CORS Configuration
+// CORS Configuration - Update for Next.js
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Rate Limiting
@@ -42,6 +45,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/servers', serverRoutes); // Add this line
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -79,6 +83,7 @@ app.listen(PORT, () => {
   console.log(`🚀 AuraDeploy server running on port ${PORT}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`🔗 MongoDB: ${process.env.MONGO_URI}`);
 });
 
 // Graceful shutdown
